@@ -81,6 +81,7 @@ npm init -y
 ```
 
 Then install dependencies:
+(try to understand their purposes in the scope of the project)
 
 ```
 npm install bcrypt jsonwebtoken mongoose express cors dotenv
@@ -161,7 +162,7 @@ backend/
 
 Now we will create our models. 
 
-A *model* or *schema* is basically how our data is stored inside the database. It is a blueprint to tell us how should the data look like (e.g. which fields should the data have, the restrictions to each field, etc). The two main types of database are *SQL* and *NoSQL*. Basically, a *SQL* database require the data to follow the schema as strictly as possible, and invalid data (which does not follow the schema) will not allowed to be persisted. On the other hand, *NoSQL* database are database that are more flexible, allowing users to store data that does not have a fixed schema. 
+A *model* or *schema* is basically how our data is stored inside the database. It is a blueprint to tell us how should the data look like (e.g. which fields should the data have, the restrictions to each field, etc). The two main types of database are *SQL* and *NoSQL*. Basically, a *SQL* database require the data to follow the schema as strictly as possible, and invalid data (which does not follow the schema) will not allowed to be persisted. On the other hand, *NoSQL* database are databases that are more flexible, allowing users to store data that does not have a fixed schema. 
 
 In this guide we will use MongoDB - a NoSQL database. 
 
