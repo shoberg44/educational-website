@@ -668,6 +668,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 The login process works by first finding an user with the same username as provided by the request. Then, it hashes the password received from the request and compare it against the one queried from the database. If the username is not valid or the password is incorrect, it sends back a `401 unauthorized`. Otherwise, a JWT is signed along with the payload and returned.
 
+(Guiding question: What is the function of { expiresIn: 60*60 }? Why is it set to 1 hour? Think about the security implication of the token)
+
 #### Handling JWT 
 
 Now that we have a way to generate JWTs. What about storing them and using them for authorization, e.g. to create contacts? In the frontend, the code used to send requests may look like this:
@@ -2096,6 +2098,8 @@ The final part is to add a small field to add new contacts to an user like this:
 ![](Pasted image 20250716002227.png)
 
 This is no different from the login form so you should do it yourself :)
+
+(Guiding tips: Try simulating the loading state that you would normally see on websites (like a "Saving Profile..." with a loading wheel spinner)
 
 ### Add styling 
 
