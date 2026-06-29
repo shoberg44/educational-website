@@ -168,6 +168,8 @@ In this guide we will use MongoDB - a NoSQL database.
 
 Now think about what your models need. In this application, we need two entities: `User` and `Contact`. User will have name, username, email, password, and a list of contact. Contact will have name, number, and belongsTo (which user). 
 
+(Guiding tips: Try to understand how User and Contact work in tandem with each other, and how the contacts are stored in the database.)
+
 First, for our `User`: 
 
 ```typescript
@@ -319,6 +321,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 ```
+(Developer Check: Pay attention to the try catch blocks. They are essential for determining the success/failure state from calling the database. General rule of thumb: use try/catch blocks for async functions that use AWAIT)
 
 `Request, Response, NextFunction` are types required for our `req, res, next` arguments. `User.find({})` is used to get all users from the database. 
 
