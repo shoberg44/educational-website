@@ -321,7 +321,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 ```
-(Developer Check: Pay attention to the try catch blocks. In this case, they are essential for determining the success/failure state of the database call. Without try/catch, there is no error handling for database call failure and throws exception or error state. General rule of thumb: use try/catch blocks for async functions that use AWAIT)
+(Developer Check: Pay attention to the try/catch blocks. In this case, they are essential for determining the success/failure state of the database call. Without try/catch, there is no error handling for database call failure and throws exception or error state. General rule of thumb: use try/catch blocks for async functions that use AWAIT)
 
 `Request, Response, NextFunction` are types required for our `req, res, next` arguments. `User.find({})` is used to get all users from the database. 
 
@@ -1739,6 +1739,8 @@ After you're done we can continue working on the logout part.
 {: .blur}
 
 `payload` will also be cleared after this since we call `setJwt` and `setContacts`.
+
+(Security consideration: For educational purposes, utilizing localStorage to save jwt is a good start. But in enterprise applications, authentication tokens are often stored in HttpOnly cookies, which JavaScript cannot access directly thereby limiting XSS (Cross-Site Scripting) attacks.)
 
 ### Better routes handling
 
