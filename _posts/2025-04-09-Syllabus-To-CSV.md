@@ -651,7 +651,10 @@ async function JsonToCSV(markdownExport) {}
 Use fetch() to send a POST request to this Gemini endpoint:
 
 
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=YOUR_API_KEY`
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=YOUR_API_KEY`
+
+>Google often changes which models are available in the Google AI free tier. Go to [https://ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing) and scroll down to check what models are available for free -- if gemini-2.5-flash-lite is no longer available substitute any other free tier model.
+{: .prompt-warning }
 
 Replace YOUR_API_KEY with your Gemini key (preferably from `hidden.js`).
 
