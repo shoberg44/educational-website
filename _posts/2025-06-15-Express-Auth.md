@@ -226,6 +226,8 @@ export default mongoose.model("User", userSchema);
 {: file="backend/src/models/user.ts" }
 {: .nolineno }
 
+(Guiding Question: Why do we store passwordHash instead of password? Try to think of the security implications if we didn't)
+
 The `validate` part above is to validate our name against regex - and if it doesn't match, the database will refuse to save the user to the database. For the `contacts` part, we're using `mongoose.Schema.Types.ObjectId` as type. When we store objects into MongoDb, each object will have its own id. Think of this as an array of id of `Contact`s, so that we can convert them back to actual `Contact` later. 
 
 Also, the "toJSON" part at the end of our file is defining what will the object be like when transformed into JSON. We *absolutely* don't want to reveal an user's `passwordHash`, so we must delete that from the returned result. There are two more fields: `_id` and `__v`, in which we don't need `__v`, and for `_id`, I chose to rename it to just `id`. 
@@ -290,6 +292,12 @@ After we have defined our models, we can move on to write controllers.
 A *controller* can generally be understood as your request handler. For example, if you create a GET request to `localhost:3001/api/users`, the controllers will handle that request, do various backend operations, such as talking/querying to database or getting the data, and then send back to you the response from the server.  For most applications, with each model, you should write all the [CRUD](https://www.codecademy.com/article/what-is-crud) controllers for each object. In RESTful applications, that translates to four types of requests: GET, POST, DELETE, PUT/PATCH.
 
 For the scope of this app, I'm going to simplify things a bit. For `User`, we just want a `POST` request (registering new users) and a GET request (for login). For `Contact`, we want a GET, POST, and DELETE. 
+
+(Guiding Tips: Controllers should usually be light on code. They should ideally:
+- Validate Request
+- Call Business Logic
+- Send Response
+)
 
 For `User`: 
 
@@ -384,6 +392,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 {: file="backend/src/controllers/registerController.ts"}
 {: .nolineno }
 {: .blur }
+
+(Developer Check: Password Hashing is computationally expensive; therefore, it is optimal to validate password so that erroneous password formats won't get hashed unnecessarily)
 
 ### Creating the Express Application
 
