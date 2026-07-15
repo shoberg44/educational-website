@@ -81,6 +81,7 @@ npm init -y
 ```
 
 Then install dependencies:
+(try to understand their purposes in the scope of the project)
 
 ```
 npm install bcrypt jsonwebtoken mongoose express cors dotenv
@@ -159,13 +160,15 @@ backend/
 
 ### Creating the models 
 
-Now we will create our models. 
+Now we will create our models.
 
-A *model* or *schema* is basically how our data is stored inside the database. It is a blueprint to tell us how should the data look like (e.g. which fields should the data have, the restrictions to each field, etc). The two main types of database are *SQL* and *NoSQL*. Basically, a *SQL* database require the data to follow the schema as strictly as possible, and invalid data (which does not follow the schema) will not allowed to be persisted. On the other hand, *NoSQL* database are database that are more flexible, allowing users to store data that does not have a fixed schema. 
+A *model* or *schema* is basically how our data is stored inside the database. It is a blueprint to tell us how should the data look like (e.g. which fields should the data have, the restrictions to each field, etc). The two main types of database are *SQL* and *NoSQL*. Basically, a *SQL* database require the data to follow the schema as strictly as possible, and invalid data (which does not follow the schema) will not allowed to be persisted. On the other hand, *NoSQL* database are databases that are more flexible, allowing users to store data that does not have a fixed schema. 
 
 In this guide we will use MongoDB - a NoSQL database. 
 
 Now think about what your models need. In this application, we need two entities: `User` and `Contact`. User will have name, username, email, password, and a list of contact. Contact will have name, number, and belongsTo (which user). 
+
+(Guiding tips: Try to understand how User and Contact work in tandem with each other, and how the contacts are stored in the database.)
 
 First, for our `User`: 
 
@@ -223,6 +226,8 @@ export default mongoose.model("User", userSchema);
 {: file="backend/src/models/user.ts" }
 {: .nolineno }
 
+(Guiding Question: Why do we store passwordHash instead of password? Try to think of the security implications if we didn't)
+
 The `validate` part above is to validate our name against regex - and if it doesn't match, the database will refuse to save the user to the database. For the `contacts` part, we're using `mongoose.Schema.Types.ObjectId` as type. When we store objects into MongoDb, each object will have its own id. Think of this as an array of id of `Contact`s, so that we can convert them back to actual `Contact` later. 
 
 Also, the "toJSON" part at the end of our file is defining what will the object be like when transformed into JSON. We *absolutely* don't want to reveal an user's `passwordHash`, so we must delete that from the returned result. There are two more fields: `_id` and `__v`, in which we don't need `__v`, and for `_id`, I chose to rename it to just `id`. 
@@ -231,6 +236,8 @@ Next, for our `Contact`:
 
 > Task: Create our `Contact` model inside `backend/src/models`. It should have name, number, and a belongsTo field that reference back to an user. When referring to other objects, use its ObjectId. You should also add some validation of your choice - looking up some public regex can be a good idea.
 {: .prompt-tip}
+
+(Guiding tips: Before unblurring, think about this: a User can own many contacts (a *list* of contacts), but a Contact only *belongs to* one User. Look at the user.ts file for reference before typing the belongsTo field) 
 
 **Answer (click to unblur):**
 
@@ -282,9 +289,15 @@ If you were able to understand the `User` file above, this file should be pretty
 
 After we have defined our models, we can move on to write controllers. 
 
-A *controller* can generally be understood as your request handler. For example, if you create a GET request to `localhost:3001/api/users`, the controllers will handle that request, do various backend operations, such as talking/querying to database or getting the data, and then send back to you the response from the server.  For most applications, with each model, you should write all the [CRUD](https://www.codecademy.com/article/what-is-crud) controllers for each object. In RESTful applications, that translates to four types of request: GET, POST, DELETE, PUT/PATCH.
+A *controller* can generally be understood as your request handler. For example, if you create a GET request to `localhost:3001/api/users`, the controllers will handle that request, do various backend operations, such as talking/querying to database or getting the data, and then send back to you the response from the server.  For most applications, with each model, you should write all the [CRUD](https://www.codecademy.com/article/what-is-crud) controllers for each object. In RESTful applications, that translates to four types of requests: GET, POST, DELETE, PUT/PATCH.
 
 For the scope of this app, I'm going to simplify things a bit. For `User`, we just want a `POST` request (registering new users) and a GET request (for login). For `Contact`, we want a GET, POST, and DELETE. 
+
+(Guiding Tips: Controllers should usually be light on code. They should ideally:
+- Validate Request
+- Call Business Logic
+- Send Response
+)
 
 For `User`: 
 
@@ -316,6 +329,7 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 ```
+(Developer Check: Pay attention to the try/catch blocks. In this case, they are essential for determining the success/failure state of the database call. Without try/catch, there is no error handling for database call failure and throws exception or error state. General rule of thumb: use try/catch blocks for async functions that use AWAIT)
 
 `Request, Response, NextFunction` are types required for our `req, res, next` arguments. `User.find({})` is used to get all users from the database. 
 
@@ -378,6 +392,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 {: file="backend/src/controllers/registerController.ts"}
 {: .nolineno }
 {: .blur }
+
+(Developer Check: Password Hashing is computationally expensive; therefore, it is optimal to validate password so that erroneous password formats won't get hashed unnecessarily)
 
 ### Creating the Express Application
 
@@ -664,6 +680,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 {: .nolineno }
 
 The login process works by first finding an user with the same username as provided by the request. Then, it hashes the password received from the request and compare it against the one queried from the database. If the username is not valid or the password is incorrect, it sends back a `401 unauthorized`. Otherwise, a JWT is signed along with the payload and returned.
+
+(Guiding question: What is the function of { expiresIn: 60*60 }? Why is it set to 1 hour? Think about the security implication of the token)
 
 #### Handling JWT 
 
@@ -1732,6 +1750,8 @@ After you're done we can continue working on the logout part.
 
 `payload` will also be cleared after this since we call `setJwt` and `setContacts`.
 
+(Security consideration: For educational purposes, utilizing localStorage to save jwt is a good start. But in enterprise applications, authentication tokens are often stored in HttpOnly cookies, which JavaScript cannot access directly thereby limiting XSS (Cross-Site Scripting) attacks.)
+
 ### Better routes handling
 
 Currently we have `/register` for the register page. However, we want a better separation: `/login` for login page, `/home` for home page. We also want some logic handling: for example, when user logged in successfully, we want to immediately go to `/home`. To do that we will be upgrading our `App.tsx` file with more routes and logic. 
@@ -2093,6 +2113,8 @@ The final part is to add a small field to add new contacts to an user like this:
 ![](Pasted image 20250716002227.png)
 
 This is no different from the login form so you should do it yourself :)
+
+(Guiding tips: Try simulating the loading state that you would normally see on websites (like a "Saving Profile..." with a loading wheel spinner)
 
 ### Add styling 
 
