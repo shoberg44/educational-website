@@ -4,7 +4,7 @@ author: arnav
 date: 2025-03-23 12:00:00 +0800
 categories: [Syllabus To CSV]
 tags: [JavaScript, Easy]
-description: Convert your class syllabus into a CSV of all your assignments
+description: Convert your class syllabus into a CSV file with all of your assignments
 comments: false
 pin: true
 media_subpath: /assets/tutorials/csv
@@ -40,7 +40,7 @@ We are going to create a new GitHub repo for this project, no starter code neede
 - Select `Add` > `Create new repository`
 - Give it a Name and *optionally* a description
 - Click create repository
-- Open in your preferred IDE
+- Open in your preferred IDE (such as VS Code)
 
 Create a file called `manifest.json`, make sure to give it a name and description.
 
@@ -164,7 +164,7 @@ Without async, we’d have to use .then() chains, which are harder to manage.
 
 Arrow function syntax (() => {}) is a modern way to write functions in JavaScript. It's short, clean, and avoids creating its own this context — which works well here since we don’t need to refer to the event handler’s context directly.
 
-> **Tip:** In short we use async () => {} to write cleaner, more modern code that lets us easily work with APIs that take time to respond.
+> **Tip:** We use async to write cleaner code that lets us easily work with an API. If you'd like to learn more about why async & await is the best practice, watch this [video](https://www.youtube.com/watch?v=li7FzDHYZpc)
 {: .prompt-info }
 ```js
 const fileUploaded = this.files.item(0);
@@ -173,7 +173,8 @@ const fileUploaded = this.files.item(0);
 {: .nolineno }
 This line grabs the first file the user selected. Since we’re only supporting one file at a time, we access the file at index 0.
 
-Below you should create your own safety check to check if fileUploaded is null. If it is, we want to return.
+> Important: At this time, add a check to make sure that the file uploaded correctly. If there isn't a file, we want to terminate the program
+{: .prompt-warning }   
 
 ```js
 const form = new FormData();
@@ -283,7 +284,7 @@ export default {
 {: .nolineno }
 
 > Never commit this file to GitHub!
-If you’re using Git, be sure to add `hidden.js` to your `.gitignore`.
+If you’re using Git, be sure to add `hidden.js` to your `.gitignore` file.
 {: .prompt-danger }
 
 ### What is a .gitignore file?
@@ -653,7 +654,7 @@ Use fetch() to send a POST request to this Gemini endpoint:
 
 `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=YOUR_API_KEY`
 
->Google often changes which models are available in the Google AI free tier. Go to [https://ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing) and scroll down to check what models are available for free -- if gemini-2.5-flash-lite is no longer available substitute any other free tier model.
+>Google often changes which models are available in the Google AI free tier. Go to [https://ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing) and scroll down to check what models are available for free --- if gemini-2.5-flash-lite is no longer available substitute any other free tier model.
 {: .prompt-warning }
 
 Replace YOUR_API_KEY with your Gemini key (preferably from `hidden.js`).
