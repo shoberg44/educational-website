@@ -59,15 +59,14 @@ You will be prompted to name your project. I named mine **my-app**.
 
 Next, you will be prompted to select an Expo SDK version (here's what mine looks like):
 
+Then, you MUST select **For learning with Expo Go (SDK 54)**.
+
 ```console
 Select an Expo SDK version: » - Use arrow-keys. Return to submit.
->   Latest (SDK 57) - Recommended for most projects
+    Latest (SDK 57)
     For learning with Expo Go (SDK 54)
     Other SDK version…
 ```
-
-> **IMPORTANT:** Because we are using the Expo Go app on our phones for this tutorial to make testing easy, you MUST select **For learning with Expo Go (SDK 54)**.
-{: .prompt-danger }
 
 The setup automatically configures **Expo Router**, which gives us Next.js style file-based routing out of the box!
 
@@ -84,8 +83,8 @@ Since we want to use standard TailwindCSS classes (like `className="flex flex-co
 Run this command in your project folder to install NativeWind and its dependencies:
 
 ```console
-$ npm install nativewind@4.2.3 tailwindcss@3.4.19 react-native-css-interop@0.2.3
-$ npx expo install react-native-reanimated babel-preset-expo
+npm install nativewind@4.2.3 tailwindcss@3.4.19 react-native-css-interop@0.2.3
+npx expo install react-native-reanimated babel-preset-expo
 ```
 
 Initialize Tailwind:
@@ -136,6 +135,8 @@ module.exports = function (api) {
   };
 };
 ```
+> **QUESTION:** Take a moment to explore what Babel is and how it transforms JavaScript. Understanding Babel will help you grasp the role of the `babel.config.js` file in this tutorial. 
+{: .prompt-tip }
 
 To make sure your app loads this styling globally, go into `app/_layout.tsx` and add this import to the very top of the file:
 ```javascript
@@ -152,7 +153,7 @@ npm run start
 
 This will give you a QR code. You can download the **Expo Go** app on your phone to scan it and view your app live on your physical device, or press `i` to open it in an iOS Simulator if you have a Mac!
 
-> **NOTE:** When you change your code and save, the Expo Go app will automatically refresh the screen for you. 
+> **NOTE:** When you change your code and save, the Expo Go app will automatically refresh the screen for you. You can also enter 'r' into the console. 
 {: .prompt-info }
 
 Now you are ready to start the tutorial! Take a look at your file tree. It should look something like this:
@@ -160,23 +161,37 @@ Now you are ready to start the tutorial! Take a look at your file tree. It shoul
 ```
 my-app/
 ├── app/
+│   ├── (tabs)/
+│   │   ├── _layout.tsx
+│   │   ├── explore.tsx
+│   │   └── index.tsx
 │   ├── _layout.tsx
-│   ├── index.tsx
-│   └── +not-found.tsx
+│   └── modal.tsx
 ├── assets/
+│   └── images/
 ├── components/
+│   └── ...
 ├── constants/
+│   └── ...
+├── hooks/
+│   └── ...
 ├── scripts/
+│   └── ...
 ├── .gitignore
 ├── app.json
 ├── babel.config.js
+├── eslint.config.js
+├── expo-env.d.ts
+├── global.css
+├── metro.config.js
+├── nativewind-env.d.ts
 ├── package-lock.json
 ├── package.json
 ├── tailwind.config.js
-└── README.md
+└── tsconfig.json
 ```
 
-Feel free to check out **app/index.tsx** in your app folder, this is the **home screen** in your Expo app, which is a good transition into the first topic.
+Feel free to check out **app/(tabs)/index.tsx** in your app folder, this is the **home screen** in your Expo app, which is a good transition into the first topic.
 
 > **QUESTION:** There are some new files in our project. What are `package.json` and `app.json` used for in an Expo project?
 {: .prompt-tip }
@@ -188,6 +203,9 @@ Feel free to check out **app/index.tsx** in your app folder, this is the **home 
 Let’s take a look at what this really means.
 
 In your **/app** folder create a folder called *```video```*. In this folder create a file called **index.tsx**. In this file, put something really simple like this:
+
+> **NOTE:** In Expo Router, folders wrapped in parentheses like `(tabs)` are **Route Groups** used to organize shared layouts (like tab navigation) without adding the group name to the URL path. Standard folders without parentheses (like `video`) map directly to the URL route (e.g. `/video`). Since we want a standalone `/video` route, we create a normal folder named `video` directly inside `app/` (outside the `(tabs)` folder).
+{: .prompt-info }
 
 ```tsx
 import { Text, View } from 'react-native';
@@ -222,14 +240,18 @@ Here is what your file tree should look like now:
 ```
 my-app/
 ├── app/
-│   ├── _layout.tsx
-│   ├── index.tsx
+│   ├── (tabs)/
+│   │   ├── _layout.tsx
+│   │   ├── explore.tsx
+│   │   └── index.tsx
 │   ├── playlist/
 │   │   └── index.tsx
 │   ├── search/
 │   │   └── index.tsx
-│   └── video/
-│       └── index.tsx
+│   ├── video/
+│   │   └── index.tsx
+│   ├── _layout.tsx
+│   └── modal.tsx
 ```
 
 You should have **4 routes** in your app: the home screen (`index.tsx`), ```/search```, ```/playlist```, and ```/video```.
@@ -245,7 +267,7 @@ Instead of writing complex Native iOS and Android code from scratch to display a
 Run this command to install a popular YouTube video package:
 
 ```console
-$ npm install react-native-youtube-iframe react-native-webview
+npm install react-native-youtube-iframe react-native-webview
 ```
 
 > **QUESTION:** What are the benefits of using third-party packages instead of writing everything from scratch? Are there any potential downsides?
@@ -261,7 +283,6 @@ export default function Content() {
  return (
    <View className="flex-1 bg-black justify-center">
      <YoutubePlayer
-       height={300}
        play={false}
        videoId={"your-youtube-video-id-here"}
      />
@@ -272,7 +293,7 @@ export default function Content() {
 {: file="app/video/index.tsx" }
 {: .nolineno }
 
-> **BUG:** In the above answer I purposely **mistyped** one of the properties of `YoutubePlayer`. See if you can spot it or check your terminal logs!
+> **BUG:** In the above answer I purposely **omitted one of the required properties** of `YoutubePlayer`. See if you can spot what is missing or check your terminal logs!
 {: .prompt-danger }
 
 ### Search Route
@@ -449,7 +470,7 @@ export default function Home() {
  
  // ... return statement below ...
 ```
-{: file="app/index.tsx (Part 1)" }
+{: file="app/(tabs)/index.tsx (Part 1)" }
 {: .nolineno }
 {: .blur }
 
@@ -485,7 +506,7 @@ Please don't skip through without giving it a solid attempt :)
      </View>
      {/* ... navigation buttons below ... */}
 ```
-{: file="app/index.tsx (Part 2)" }
+{: file="app/(tabs)/index.tsx (Part 2)" }
 {: .nolineno }
 {: .blur }
 
@@ -497,7 +518,7 @@ Finally, we add our quick-navigation buttons. Since these don't require submitti
        <Pressable
          className="bg-neutral-800 p-3 rounded-lg w-[48%] mb-4 items-center"
          onPress={() => {
-           if (input.trim() !== "") router.push(`/playlist-search/${input}`);
+           if (input.trim() !== "") router.push(`/playlist/${input}`);
          }}
        >
          <Text className="text-white font-semibold">Search Playlists</Text>
@@ -525,7 +546,7 @@ Finally, we add our quick-navigation buttons. Since these don't require submitti
  );
 }
 ```
-{: file="app/index.tsx (Part 3)" }
+{: file="app/(tabs)/index.tsx (Part 3)" }
 {: .nolineno }
 {: .blur }
 
@@ -620,14 +641,18 @@ Your file tree should now look like this:
 ```
 my-app/
 ├── app/
-│   ├── _layout.tsx
-│   ├── index.tsx
+│   ├── (tabs)/
+│   │   ├── _layout.tsx
+│   │   ├── explore.tsx
+│   │   └── index.tsx
 │   ├── playlist/
 │   │   └── [playlistId].tsx
 │   ├── search/
 │   │   └── [searchId].tsx
-│   └── video/
-│       └── [videoId].tsx
+│   ├── video/
+│   │   └── [videoId].tsx
+│   ├── _layout.tsx
+│   └── modal.tsx
 ```
 
 #### Now navigate to each route by pushing `/route/[anything you want here]` (e.g. `/video/dQw4w9WgXcQ`)

@@ -128,14 +128,18 @@ We need three different functions in this service to handle our data:
 ```
 my-app/
 ├── app/
-│   ├── _layout.tsx
-│   ├── index.tsx
+│   ├── (tabs)/
+│   │   ├── _layout.tsx
+│   │   ├── explore.tsx
+│   │   └── index.tsx
 │   ├── playlist/
 │   │   └── [playlistId].tsx
 │   ├── search/
 │   │   └── [searchId].tsx
-│   └── video/
-│       └── [videoId].tsx
+│   ├── video/
+│   │   └── [videoId].tsx
+│   ├── _layout.tsx
+│   └── modal.tsx
 └── services/
     └── youtube.ts
 ```
