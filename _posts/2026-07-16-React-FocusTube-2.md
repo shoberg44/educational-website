@@ -108,6 +108,9 @@ EXPO_PUBLIC_API_KEY=yourapikeyhere
 > **IMPORTANT:** In Expo, all environment variables must start with the prefix `EXPO_PUBLIC_` for the app to access them!
 {: .prompt-danger }
 
+> **QUESTION:** Why must all Expo environment variables start with the prefix `EXPO_PUBLIC_`? What would happen if we used private API keys without this prefix on a client-side device?
+{: .prompt-tip }
+
 3. Ensure you have a `.gitignore` file and that `.env` is listed inside it. This guarantees that your API key will never be uploaded to GitHub.
 
 ## Creating your API Service Layer
@@ -217,6 +220,9 @@ export async function fetchPlaylistVideos(playlistId: string) {
 {: file="services/youtube.ts" }
 {: .nolineno }
 
+> **QUESTION:** Why do we wrap our API requests in `try/catch` blocks? What kinds of real-world errors (like network loss or API rate limits) could cause the `catch` block to execute?
+{: .prompt-tip }
+
 ## Calling the API and Displaying the Data
 
 Now that we have our service layer, we can load this data directly into our React Native screens! 
@@ -244,7 +250,7 @@ export default function SearchPage() {
    const getResults = async () => {
      try {
        // encodeURIComponent ensures weird characters don't break our URL
-       const data = await searchVideos(searchId as string, "video");
+       const data = searchVideos(searchId as string, "video");
        setResults(data);
      } catch (error) {
        console.error(error);
@@ -294,6 +300,9 @@ export default function SearchPage() {
 ```
 {: file="app/search/[searchId].tsx" }
 {: .nolineno }
+
+> **BUG HUNT:** The code above compiles perfectly without crashing, but when you run it, the screen stays blank forever (the loading spinner disappears, but no search results show up). Look closely at the `useEffect` hook. Can you find what's missing when we call the asynchronous API function?
+{: .prompt-danger }
 
 > **QUESTION:** In the code above, we use the `numberOfLines` property on the `<Text>` components. Why is this important when rendering dynamic data from an external API on mobile devices?
 {: .prompt-tip }
@@ -360,6 +369,9 @@ export default function VideoScreen() {
 ```
 {: file="app/video/[videoId].tsx" }
 {: .nolineno }
+
+> **QUESTION:** Look at how we fall back to `"No Title"` or `"No Description"` using the `??` operator. What is this operator called in JavaScript, and how does it prevent our app from crashing if the YouTube API returns null values?
+{: .prompt-tip }
 
 ### Challenge Task: Build the Playlist Page
 

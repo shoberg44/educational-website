@@ -416,6 +416,9 @@ export default function MyComponent() {
 > **QUESTION:** In React Native, we use `onChangeText` which provides the string directly. How does this differ from the web's `onChange` event?
 {: .prompt-tip }
 
+> **QUESTION:** Why can't we just use a standard local variable like `let input = ""` to track the user's input? What does `useState` do under the hood when its setter function is called?
+{: .prompt-tip }
+
 ### Handling Button Clicks and Navigation
 
 To make our navigation buttons work, we will also need the `onPress` event handler (the React Native equivalent of `onClick`). Let's see how that combines with navigation!
@@ -625,6 +628,9 @@ In order to implement this, you will need to rename your route file to use brack
 `app/video/[videoId].tsx`
 
 Expo Router knows you have a dynamic route when the file or folder name has brackets around them.
+
+> **QUESTION:** Why does the filename use brackets `[videoId]`? In a dynamic route, if a user navigates to `/video/abc`, what will the value of the parameter be?
+{: .prompt-tip }
 
 **Pay attention to what you name the file inside the brackets. That is what we will need to call in the next section.**
 
