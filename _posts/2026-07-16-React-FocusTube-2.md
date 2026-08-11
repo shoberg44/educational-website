@@ -1,9 +1,9 @@
 ---
 title: FocusTube React Native pt. 2
-author: johnny
+author: steven, johnny
 date: 2026-7-16 12:00:00 +0800
 categories: [FocusTube]
-tags: [JavaScript, React, React Native, Expo, Medium]
+tags: [React, React Native, Expo, Medium]
 description: In this project you will continue to learn the fundamentals of React Native and start learning about APIs in order to make a mobile YouTube clone that removes the distracting algorithms that hook you in.
 comments: false
 pin: true
@@ -237,7 +237,7 @@ Here is the implementation of `app/search/[searchId].tsx`:
 
 ```tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { searchVideos } from '../../services/youtube';
 
@@ -277,7 +277,7 @@ export default function SearchPage() {
      <View className="pb-10">
        {results?.items?.map((vid: any) => (
          <Link href={`/video/${vid.id.videoId}`} asChild key={vid.id.videoId}>
-           <View className="w-full bg-neutral-800 rounded-xl p-3 flex-row mb-4">
+           <Pressable className="w-full bg-neutral-800 rounded-xl p-3 flex-row mb-4">
              <Image 
                source={{ uri: vid.snippet.thumbnails.medium?.url }}
                className="w-40 h-24 rounded-lg"
@@ -290,7 +290,7 @@ export default function SearchPage() {
                  {vid.snippet.description}
                </Text>
              </View>
-           </View>
+           </Pressable>
          </Link>
        ))}
      </View>

@@ -3,7 +3,7 @@ title: FocusTube pt. 1 (React Native)
 author: steven, johnny
 date: 2026-07-16 12:00:00 +0800
 categories: [FocusTube]
-tags: [JavaScript, React Native, Expo, FocusTube, Medium]
+tags: [React Native, Expo, FocusTube, Medium]
 description: In this project you will learn the basics of React Native and Expo to start building a YouTube wrapper app that will help you focus and not stay distracted.
 comments: false
 pin: true
@@ -328,7 +328,7 @@ Next, we need a way to mock a single "Video Card". A video card should have a th
 Let's import `<Link>` from `expo-router` and `<Image>` from `react-native`, then add a dummy video card:
 
 ```tsx
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function SearchPage() {
@@ -337,7 +337,7 @@ export default function SearchPage() {
      <Text className="text-white text-3xl font-bold mb-6">Search Results</Text>
      
      <Link href="/video" asChild>
-       <View className="w-full bg-neutral-800 rounded-xl p-3 flex-row mb-4">
+       <Pressable className="w-full bg-neutral-800 rounded-xl p-3 flex-row mb-4">
          <Image 
            source={{ uri: "https://i.ytimg.com/vi/abc123/mqdefault.jpg" }}
            className="w-40 h-24 rounded-lg"
@@ -346,7 +346,7 @@ export default function SearchPage() {
            <Text className="text-white text-lg font-bold">How to Learn JavaScript</Text>
            <Text className="text-gray-400 text-sm mt-1">A quick guide to getting started with JavaScript.</Text>
          </View>
-       </View>
+       </Pressable>
      </Link>
 
    </View>
@@ -521,7 +521,16 @@ Finally, we add our quick-navigation buttons. Since these don't require submitti
        <Pressable
          className="bg-neutral-800 p-3 rounded-lg w-[48%] mb-4 items-center"
          onPress={() => {
-           if (input.trim() !== "") router.push(`/playlist/${input}`);
+           if (input.trim() !== "") router.push(`/search/${input}`);
+         }}
+       >
+         <Text className="text-white font-semibold">Regular Search</Text>
+       </Pressable>
+
+       <Pressable
+         className="bg-neutral-800 p-3 rounded-lg w-[48%] mb-4 items-center"
+         onPress={() => {
+           if (input.trim() !== "") router.push(`/playlist-search/${input}`);
          }}
        >
          <Text className="text-white font-semibold">Search Playlists</Text>
