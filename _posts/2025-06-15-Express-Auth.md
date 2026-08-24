@@ -226,7 +226,8 @@ export default mongoose.model("User", userSchema);
 {: file="backend/src/models/user.ts" }
 {: .nolineno }
 
-(Guiding Question: Why do we store passwordHash instead of password? Try to think of the security implications if we didn't)
+> **QUESTION:** Why do we store a hashed password (`passwordHash`) in the database instead of the raw plaintext password? What security implications arise if an attacker gains access to a database table storing unhashed passwords?
+{: .prompt-tip }
 
 The `validate` part above is to validate our name against regex - and if it doesn't match, the database will refuse to save the user to the database. For the `contacts` part, we're using `mongoose.Schema.Types.ObjectId` as type. When we store objects into MongoDb, each object will have its own id. Think of this as an array of id of `Contact`s, so that we can convert them back to actual `Contact` later. 
 
@@ -234,8 +235,8 @@ Also, the "toJSON" part at the end of our file is defining what will the object 
 
 Next, for our `Contact`: 
 
-> Task: Create our `Contact` model inside `backend/src/models`. It should have name, number, and a belongsTo field that reference back to an user. When referring to other objects, use its ObjectId. You should also add some validation of your choice - looking up some public regex can be a good idea.
-{: .prompt-tip}
+> **TASK:** Create our `Contact` model inside `backend/src/models`. It should have `name`, `number`, and a `belongsTo` field that references back to a `User` (using its `ObjectId`). You should also add custom regex validation for phone numbers.
+{: .prompt-warning }
 
 (Guiding tips: Before unblurring, think about this: a User can own many contacts (a *list* of contacts), but a Contact only *belongs to* one User. Look at the user.ts file for reference before typing the belongsTo field) 
 
@@ -329,7 +330,8 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 ```
-(Developer Check: Pay attention to the try/catch blocks. In this case, they are essential for determining the success/failure state of the database call. Without try/catch, there is no error handling for database call failure and throws exception or error state. General rule of thumb: use try/catch blocks for async functions that use AWAIT)
+> **NOTE (Developer Check):** Pay attention to the `try/catch` blocks. They are essential for handling errors from asynchronous database calls. As a general rule of thumb, always wrap `await` calls in `try/catch` blocks.
+{: .prompt-info }
 
 `Request, Response, NextFunction` are types required for our `req, res, next` arguments. `User.find({})` is used to get all users from the database. 
 
@@ -337,12 +339,8 @@ Remember about the `Contact`s we said earlier that are stored as ObjectId? `popu
 
 This file only consists of GET-ing users. For adding users, we will handle that in a different file, `registerController`. But I'll hand that to you. 
 
-> Task: Write a controller that supports adding users. The request contains username, name, email, and password. You should try to validate your username, email, and password (just simple `if`s are sufficient). For email validation, you might want to see [this](https://uibakery.io/regex-library/email). And you will also want to hash our password before saving to our database, using [bcrypt](https://nordvpn.com/blog/what-is-bcrypt/).  Basically, just use this in your code
-> ```typescript
-> const passwordHash = await bcrypt.hash(password, 10); 
-> ```
-> and store the password hash along with the other details into your database. You would also want to look up how to store an object to the database, if you don't already know that. 
-{: .prompt-tip}
+> **TASK:** Write a controller that supports adding users. The request contains username, name, email, and password. You should validate username, email, and password. Hash the password before saving to the database using `bcrypt.hash(password, 10)`.
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -622,11 +620,11 @@ Next, let's implement authentication with JWT (Json Web Token). Watch [this](htt
 
 After that you can play around on [jwt.io](https://jwt.io/). Notice it has three parts: headers, payload, and signature. The signature part is done using a private key. However, we don't have a private key yet.
 
->Task: Create a SECRET_KEY field in your `.env` file and also set it up in the `config` file. It should not just be a random string. Use [this](https://jwt-keys.21no.de/) to generate a secure key.  
-{: .prompt-tip}
+> **TASK:** Create a `SECRET_KEY` field in your `.env` file and configure it in `config.ts`. Do not use a trivial string — use [jwt-keys.21no.de](https://jwt-keys.21no.de/) to generate a cryptographically strong secret.
+{: .prompt-warning }
 
-> You might notice that a typical JWT application involves both public key and private key (assymmetric cryptography). In the scope of this project, however, we will only use a simple shared secret key (symmetric cryptography). 
-{: .prompt-info}
+> **NOTE:** In enterprise JWT setups, asymmetric cryptography (public/private key pairs) is commonly used so identity providers sign tokens that services verify independently. In this tutorial, we will use symmetric cryptography (a single shared secret key).
+{: .prompt-info }
 
 #### Which endpoints need protection?
 
@@ -681,7 +679,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 The login process works by first finding an user with the same username as provided by the request. Then, it hashes the password received from the request and compare it against the one queried from the database. If the username is not valid or the password is incorrect, it sends back a `401 unauthorized`. Otherwise, a JWT is signed along with the payload and returned.
 
-(Guiding question: What is the function of { expiresIn: 60*60 }? Why is it set to 1 hour? Think about the security implication of the token)
+> **QUESTION:** What is the purpose of `{ expiresIn: 60 * 60 }`? Why is token expiration set to 1 hour instead of never expiring? What security risks exist if an access token has no expiration date?
+{: .prompt-tip }
 
 #### Handling JWT 
 
@@ -832,8 +831,8 @@ To summarize: the first middleware extracts the JWT and attaches it to the reque
 
 Finally, we need to configure the middleware in our `app.ts` file. 
 
-> Task: Add the login endpoint and the two middlewares above to our `app.ts` file. The login and register endpoints should still be public, but the users endpoint should be protected by `jwtAuth`. 
-{: .prompt-tip}
+> **TASK:** Add the login endpoint and the two middlewares above to our `app.ts` file. The login and register endpoints should remain public, but the users endpoint must be protected by `jwtAuth`. 
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -863,8 +862,8 @@ When the user login/register, there is no JWT, so the `modifyToken` middleware w
 
 The final part of our backend is setting up contact controllers. 
 
-> Task: set up `getAllContacts`, `addNewContact` and `deleteById` in `contactController`. Then create a `contactRouter`, and add it to the `app.ts` file and protect with `jwtAuth`. 
-{: .prompt-tip}
+> **TASK:** Set up `getAllContacts`, `addNewContact` and `deleteById` in `contactController`. Then create a `contactRouter`, and add it to `app.ts` protected by `jwtAuth`. 
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1120,9 +1119,8 @@ After this we can have a simple login form that look like this (the `register` b
 
 First the form have two states: `username` and `password`, contained within a form, and set up to change as the user edit the text fields. Then, the submit button is named `login` and linked to `handleLogin`. `event.preventDefault()` is to prevent the page from reloading. Notice that `handleLogin` is currently missing `handleLoginBackend`. 
 
-> Task: Create function `handleLoginBackend` that will send the request (username and password) from the frontend from the backend we set up above. If the credentials is valid, the backend will return the JWT and you should persist it within a state. 
-> You will need to look up how to send request from frontend. I used [Axios](https://github.com/axios/axios). 
-{: .prompt-tip}
+> **TASK:** Create function `handleLoginBackend` that will send the credentials (username and password) to the backend `/api/login`. If valid, persist the returned JWT within React state. (You can use [Axios](https://github.com/axios/axios)).
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1188,8 +1186,8 @@ Also, the `alias` part is to make sure your files recognizes the `@shared/types.
 
 Then, after the user is logged in, we should display the contacts. 
 
-> Task: Implement displaying the list of contacts after the user is logged in. To do it, you can check if the JWT is not null. 
-{: .prompt-tip}
+> **TASK:** Implement displaying the list of contacts after the user is logged in. Check that the JWT state is not null before rendering. 
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1239,8 +1237,8 @@ If you didn't know `useEffect` already you should look it up *immediately*. Also
 
 However, If you test this code right now, you'll notice a problem: **all contacts in the database are being displayed**, regardless of which user is logged in. This is a security issue! Each user should only see their own contacts.
 
-> Task: Fix so that only contacts belong to the authenticated user are displayed. To do that you'll first need to decode your JWT in order to get the username. Use [jwt-decode](https://www.npmjs.com/package/jwt-decode).
-{: .prompt-tip}
+> **TASK:** Fix the contact list so that only contacts belonging to the authenticated user are displayed. Use [jwt-decode](https://www.npmjs.com/package/jwt-decode) to decode the token and read the user's username.
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1375,8 +1373,8 @@ export function useLogin() {
 {: file="frontend/src/hooks/useLogin.tsx"}
 {: .nolineno}
 
-> Task: Define the types used in this file that you have not defined in `types.ts`.
-{: .prompt-tip}
+> **TASK:** Define the types used in this file that you have not defined in `types.ts`.
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1516,8 +1514,8 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
 
 Notice the `Promise<LoginResponse>` return type annotation. This is a best practice - you should always define strict data types for your function inputs and outputs. You may want to refer back to your `loginController` to define the appropriate data type structure for `LoginResponse`. After that you should refactor the whole application before moving on. 
 
-> **Task**: Refactor your `Contact` API calls using the same service pattern, and create a dedicated service file for any place where you're making direct API calls in your current code.
-{: .prompt-tip}
+> **TASK**: Refactor your `Contact` API calls using the same service pattern, and create a dedicated service file for any place where you're making direct API calls in your current code.
+{: .prompt-warning }
 
 ### Register page and React Router
 
@@ -1613,8 +1611,8 @@ const RegisterForm = () => {
 
 The `useNavigate` hook is used to navigate to a different page. In our logic, after the registration success, we will be redirected to the default page `/` (which is currently where our login page is located). We also added another cancel button at the end for users to return to homepage.
 
-> Task: Do the same thing in `LoginForm`: Create a `Register` button that navigates to `/register`. 
-{: .prompt-tip}
+> **TASK:** Do the same thing in `LoginForm`: Create a `Register` button that navigates to `/register`. 
+{: .prompt-warning }
 
 After that, in `App.tsx`: 
 
@@ -1726,13 +1724,13 @@ export const setToken = (newToken: string) => {
 
 This will persist the token directly inside `contactService` and eliminates any necessity to pass the token from outside. 
 
-> Task: In the above part we did not validate if the JWT extracted from localStorage is valid or not (in particular, its expiry time). Try to validate the JWT after it is retrieved from the browser. If it's not valid, do not continue, but rather delete the token from `localStorage`. You can definitely look up on how to do this - I did the same. To test, go back to backend and change `expiresIn` to a small number and try to refresh the website after.
-{: .prompt-tip}
+> **TASK:** In the code above we did not validate whether the JWT extracted from `localStorage` is expired or not. Validate the JWT expiry timestamp upon retrieval from the browser. If invalid or expired, purge the token from `localStorage` and reset state.
+{: .prompt-warning }
 
 After you're done we can continue working on the logout part. 
 
-> Task: Implement logout function. You should put it inside `useLogin`. The logic is pretty simple: since the contact will not render without `jwt`, you can just clear up all of them. 
-{: .prompt-tip}
+> **TASK:** Implement the `handleLogout` function inside `useLogin`. Clear `JwtAccessToken` from `localStorage`, set `jwt` and `contacts` state to empty/null, and clear the token from `contactService`.
+{: .prompt-warning }
 
 **Answer (click to unblur):**
 
@@ -1750,14 +1748,15 @@ After you're done we can continue working on the logout part.
 
 `payload` will also be cleared after this since we call `setJwt` and `setContacts`.
 
-(Security consideration: For educational purposes, utilizing localStorage to save jwt is a good start. But in enterprise applications, authentication tokens are often stored in HttpOnly cookies, which JavaScript cannot access directly thereby limiting XSS (Cross-Site Scripting) attacks.)
+> **SECURITY NOTE:** For educational purposes, storing JWTs in `localStorage` is convenient. In production applications, tokens are typically stored in `HttpOnly` cookies to protect them from XSS (Cross-Site Scripting) attacks.
+{: .prompt-info }
 
 ### Better routes handling
 
 Currently we have `/register` for the register page. However, we want a better separation: `/login` for login page, `/home` for home page. We also want some logic handling: for example, when user logged in successfully, we want to immediately go to `/home`. To do that we will be upgrading our `App.tsx` file with more routes and logic. 
 
-> Task: Upgrade your `App.tsx` so that it has three routes: `/login`, `/register`, and `/home`. The `/login` endpoint should only contain `LoginForm`, `/home` should only contain `Homepage` (rename `ContactDisplay` into this), and `/register` to only contain the `RegisterForm`. When the user attempts to go to the default endpoint `/`, you should check if the user is logged in or not and then redirect correspondingly (same goes for `/login` and `/home`).  Use `<Navigate>` to redirect. 
-{: .prompt-tip}
+> **TASK:** Upgrade `App.tsx` so that it has three routes: `/login`, `/register`, and `/home`. If a logged-in user accesses `/` or `/login`, redirect them to `/home` using `<Navigate replace />`. If an unauthenticated user accesses `/home`, redirect them to `/login`.
+{: .prompt-warning }
 
 **Hint 1 (login endpoint)**
 

@@ -365,8 +365,8 @@ You can copy and paste the `<Link>` block multiple times if you want to see what
 
 ### Playlist Route
 
-> **TASK:**  Make the playlist route. It is very similar to the search route. You got this!
-{: .prompt-tip }
+> **TASK:** Make the playlist route. It is very similar to the search route. You got this!
+{: .prompt-warning }
 
 - Inside ```app/playlist/index.tsx```, create a React Native component that shows fake video cards in a playlist.
 - Style each video as you want using NativeWind classes.

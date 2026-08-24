@@ -496,19 +496,11 @@ headers: {
 ```
 {: file="popup.js" }
 {: .nolineno }
-What does "Accept": "application/json" mean?
-This tells the server:
+> **QUESTION:** What does the header `"Accept": "application/json"` communicate to the API server? What might happen if a client doesn't specify which content format it expects back?
+{: .prompt-tip }
 
-“Hey, I expect the response to be in JSON format.”
-
-Without it, some APIs may return unexpected formats or not work as intended.
-
-### Your Goal
-- Make the fetch() call using the correct method (GET)
-
-- Pass in the required headers
-
-- Use .json() to extract the result into a usable object (just like we did when uploading the file)
+> **TASK 1:** Use `fetch()` to make a `GET` request to `https://api.mistral.ai/v1/files/FILE_ID/url?expiry=24` (replacing `FILE_ID` with `PDFJson.id`), pass the required `headers`, and extract the signed download URL using `.json()`.
+{: .prompt-warning }
 
 Once you’ve done that, you’ll have access to a temporary URL like:
 ```json
@@ -545,37 +537,11 @@ headers: {
 The Body (What You’re Sending)
 Before we send the body, we need to convert our JavaScript object into a string using JSON.stringify().
 
-What is JSON.stringify()?
-APIs expect request bodies to be sent as JSON strings — not raw JavaScript objects.
-JSON.stringify() takes an object and converts it into a JSON-formatted string that can be sent in the request.
-```js
-JSON.stringify({ name: "Arnav" });
-// -> '{"name":"Arnav"}'
-```
-{: .nolineno }
-Now, here’s the structure of the object you’ll send:
-```json
-{
-  "model": "mistral-ocr-latest",
-  "document": {
-    "type": "document_url",
-    "document_url": "THE_TEMPORARY_URL_HERE"
-  },
-  "include_image_base64": true
-}
-```
-{: file="popup.js" }
-{: .nolineno }
+> **QUESTION:** Why do web APIs expect serialized JSON strings (via `JSON.stringify()`) in HTTP request bodies instead of raw in-memory JavaScript objects?
+{: .prompt-tip }
 
-> Replace "THE_TEMPORARY_URL_HERE" with responseJSON.url from the previous step.
+> **TASK 2:** Use `fetch()` with method `'POST'` to send the JSON-stringified document payload to `https://api.mistral.ai/v1/ocr`, pass the authentication headers, and extract the result using `.json()`.
 {: .prompt-warning }
-
-### Your Goal
-- Use fetch() with method 'POST'
-- Add the correct headers
-- Convert the body to a JSON string using JSON.stringify()
-- Use .json() to extract the result
-- Return the variable that extracted the result
 
 ## Parse upload into assignment list
 
@@ -585,37 +551,10 @@ The OCR response (`ocrJson`) contains a list of pages — and each page includes
 
 We want to loop through all those pages and combine the Markdown into one big string we can send to an AI model later.
 
-### Your Task: Combine All Markdown Pages
+> **TASK 3:** Loop through `ocrJson.pages` and concatenate the `markdown` property from each page into a single combined Markdown string.
+{: .prompt-warning }
 
-Follow these steps to build the final syllabus content:
-
-1. **Store the OCR response**
-
-   You should already have a variable that holds the full response from your OCR request. If not, make sure you're calling the correct function to get that data.
-
-2. **Create a variable to store all the text**
-
-   Start with an empty string. This will hold the full Markdown content once you're done.
-
-3. **Loop through each page**
-
-   Use a `for...of` loop to go through the `pages` array in the response.
-
-4. **Inside the loop, access the `markdown` field of each page**
-
-   Each page object contains a `markdown` property — that's the extracted content from that page.
-
-5. **Append each `markdown` snippet to your string**
-
-   Add each page’s Markdown to your full text variable. Make sure to include a space or newline between pages so they don’t get mashed together.
-
-6. **(Optional) Print the final Markdown**
-
-   Once your loop is done, use `console.log()` to print the final result and make sure it looks correct.
-
->  **Why are we doing this?**
-> 
-> By combining all the page content into one Markdown string, we can pass it to an AI model in a single prompt and ask it to extract assignments for us — much easier than handling one page at a time!
+> **NOTE:** By combining all page content into one Markdown string, we can pass it to an AI model in a single prompt and ask it to extract assignments for us — much easier than handling one page at a time!
 {: .prompt-info }
 
 Next, we’ll send that full Markdown string to an AI to find and extract a list of assignments.
@@ -639,48 +578,11 @@ const geminiApiKey = "your-gemini-api-key-here";
 ```
 {: file="hidden.js" }
 {: .nolineno }
-Your Task: Send the Markdown to Gemini
-Here’s what you need to do:
+> **TASK 4:** Implement `async function JsonToCSV(markdownExport)` to `POST` the combined markdown to Gemini's `generateContent` endpoint and request assignment extraction in CSV format.
+{: .prompt-warning }
 
-Create this function
-```js
-async function JsonToCSV(markdownExport) {}
-```
-{: file="popup.js" }
-{: .nolineno }
-Use fetch() to send a POST request to this Gemini endpoint:
-
-
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=YOUR_API_KEY`
-
-Replace YOUR_API_KEY with your Gemini key (preferably from `hidden.js`).
-
-In the headers, include:
-
-```
-"Content-Type": "application/json"
-```
-{: file="popup.js" }
-{: .nolineno }
-In the body of the request:
-- Use JSON.stringify() to convert your request body to JSON
-- Create a prompt asking Gemini to extract assignments from the Markdown you created
-- Ask for a CSV format with these columns:
-- Due Date
-- Class
-- Assignment Name
-- Assignment Type (from: Homework, Reading, Project, Exam)
-- Checkbox
-
-Make sure to include your entire markdownExport inside the prompt using a template string (${}).
-
-> Tip: The more specific and clear your prompt is, the better your results will be. You’re essentially saying:
-"Hey Gemini, here’s a syllabus in Markdown. Can you pull out the assignments and return them in a neat table?"
+> **NOTE:** The more specific and clear your prompt is, the better your results will be. Instruct Gemini on exact column headers (`Due Date, Class, Assignment Name, Assignment Type, Checkbox`) and to return pure CSV data without markdown ticks.
 {: .prompt-info }
-
-Your goal here is to get back a Gemini response containing a CSV-formatted list of assignments from your syllabus.
-
-We’ll use this response in the next step to create a downloadable .csv file the user can save!
 
 ## Downloading the file
 Now that Gemini has returned your assignment list in CSV format, the final step is to let the user download it!
