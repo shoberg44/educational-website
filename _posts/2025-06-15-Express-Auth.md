@@ -660,24 +660,38 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
   const user = await User.findOne({ username });
 
-  if (!user || !(await bcrypt.compare(password, String(user!.passwordHash))))
-    return void res.status(401).send({ err: "Invalid credentials "});
+  if (!user || !(await bcrypt.compare(password, String(user!.passwordHash)))) {
+    res.status(401).send({ err: "Invalid credentials" });
+  }
 
   const payload = {
-    username: user.username,
-    name: user.name,
-    id: user._id
+    username: user!.username,
+    name: user!.name,
+    id: user!._id
   };
 
   const token = jwt.sign(payload, config.SECRET_KEY, { expiresIn: 60*60 });
 
-  return void res.status(200).send({ token });
+  res.status(200).send({ token });
 } 
 ```
 {: file="backend/src/controllers/loginController.ts" }
 {: .nolineno }
 
-The login process works by first finding an user with the same username as provided by the request. Then, it hashes the password received from the request and compare it against the one queried from the database. If the username is not valid or the password is incorrect, it sends back a `401 unauthorized`. Otherwise, a JWT is signed along with the payload and returned.
+> **BUG HUNT:** If you test this controller with invalid credentials in Postman, your server will crash with `Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client`! Why does Express keep running down to line 18 after sending the 401 response? What keyword is missing inside the `if` statement to immediately halt execution?
+{: .prompt-danger }
+
+### Fixing the Response Flow
+
+In Express, calling `res.send()` or `res.json()` transmits the HTTP response payload to the client, but **it does not automatically exit the JavaScript function**. If execution continues, Express will attempt to send a second response on the same closed connection, triggering `ERR_HTTP_HEADERS_SENT`. Always prefix early error responses with `return`:
+
+```typescript
+  if (!user || !(await bcrypt.compare(password, String(user!.passwordHash)))) {
+    return void res.status(401).send({ err: "Invalid credentials" });
+  }
+```
+{: file="backend/src/controllers/loginController.ts" }
+{: .nolineno }
 
 > **QUESTION:** What is the purpose of `{ expiresIn: 60 * 60 }`? Why is token expiration set to 1 hour instead of never expiring? What security risks exist if an access token has no expiration date?
 {: .prompt-tip }
@@ -2194,9 +2208,31 @@ There is no right answer to this. But for example, mine look like this:
 /* etc. */
 ```
 {: file="frontend/src/styles/index.css"}
-{: .nolineno}
-
 Refer back to the gif at the beginning of the guide to see the full design.
+
+## Completion & Discussion Checklist
+
+Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
+
+| # | Type | Item | Prompt Preview |
+| :-: | :--- | :--- | :--- |
+| 1 | Bug Hunt | Response Header Crash (`ERR_HTTP_HEADERS_SENT`) | If you test this controller with invalid credentials, the server crashes with `Cannot set headers after they are sent`. Why does Express continue running after calling `res.send()`, and how does `return` fix it? |
+| 2 | Question | Password Hashing Security | Why do we store a hashed password (`passwordHash`) in the database instead of the raw plaintext password? What security implications arise if an attacker accesses unhashed passwords? |
+| 3 | Question | JWT Expiration Window | What is the purpose of `{ expiresIn: 60 * 60 }`? Why is token expiration set to 1 hour instead of never expiring? What risks exist if an access token has no expiration date? |
+| 4 | Task | `Contact` Mongoose Model | Create our `Contact` model inside `backend/src/models`. It should have `name`, `number`, and a `belongsTo` field referencing `User` (`ObjectId`) with regex validation. |
+| 5 | Task | User Registration Controller | Write a controller that supports adding users (username, name, email, password). Validate inputs and hash the password before saving using `bcrypt.hash(password, 10)`. |
+| 6 | Task | Secret Key Configuration | Create a `SECRET_KEY` field in `.env` and configure it in `config.ts` using a cryptographically strong generated secret. |
+| 7 | Task | Route Protection Middleware | Add login and register endpoints to `app.ts`. Ensure public routes remain open, but protect the users route with `jwtAuth` middleware. |
+| 8 | Task | Contact CRUD Controllers | Set up `getAllContacts`, `addNewContact`, and `deleteById` in `contactController`, then mount `contactRouter` in `app.ts` behind `jwtAuth`. |
+| 9 | Task | Frontend Login Handler | Create `handleLoginBackend` to send credentials to `/api/login` and persist the returned JWT within React state using Axios. |
+| 10 | Task | Conditional Contact Rendering | Implement displaying the list of contacts after the user is logged in. Check that the JWT state is not null before rendering. |
+| 11 | Task | JWT User Contact Filtering | Fix the contact list so that only contacts belonging to the authenticated user are displayed. Use `jwt-decode` to extract username. |
+| 12 | Task | Shared TypeScript Interface Declarations | Define the types used in this file that you have not defined in `types.ts` (`LoginRequest`, `Contact`, `JwtPayload`). |
+| 13 | Task | API Service Refactoring | Refactor your `Contact` API calls using the dedicated service pattern to decouple UI logic from Axios requests. |
+| 14 | Task | Register Form Navigation | In `LoginForm`, create a `Register` button that navigates to `/register` using `useNavigate()`. |
+| 15 | Task | Token Expiry Verification | Validate whether the JWT extracted from `localStorage` is expired upon retrieval. If expired, purge the token and reset state. |
+| 16 | Task | Frontend Logout Function | Implement `handleLogout` inside `useLogin` to clear `localStorage`, reset state variables, and clear the service token. |
+| 17 | Task | Protected App Routing Guards | Upgrade `App.tsx` with routes `/login`, `/register`, and `/home`. Redirect authenticated users to `/home` and unauthenticated users to `/login`. |
 
 ## Conclusion
 

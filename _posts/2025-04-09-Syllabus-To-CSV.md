@@ -171,9 +171,24 @@ const fileUploaded = this.files.item(0);
 ```
 {: file="popup.js" }
 {: .nolineno }
-This line grabs the first file the user selected. Since we’re only supporting one file at a time, we access the file at index 0.
+This line attempts to grab the first file the user selected.
 
-Below you should create your own safety check to check if fileUploaded is null. If it is, we want to return.
+> **BUG HUNT:** If you test this event handler by selecting a file and opening the DevTools Console (right-click the extension popup and click **Inspect**), you will see `TypeError: Cannot read properties of undefined (reading 'item')`! Why is `this.files` undefined inside an arrow function `async () => {}`, and how can we use the `event` parameter instead?
+{: .prompt-danger }
+
+### Fixing the `this` Context
+
+Unlike traditional `function()` declarations, arrow functions (`() => {}`) do not bind their own `this` context — `this` refers to the global window object. To access the uploaded file safely inside an arrow event listener, pass the `event` parameter and use `event.target.files[0]`:
+
+```js
+document.getElementById('file-upload').addEventListener('change', async (event) => {
+    const fileUploaded = event.target.files[0];
+    if (!fileUploaded) {
+        return;
+    }
+```
+{: file="popup.js" }
+{: .nolineno }
 
 ```js
 const form = new FormData();
@@ -193,19 +208,16 @@ A purpose field — this is useful if your API requires it (in this case, to lab
 
 The actual uploaded file, wrapped in a new File object.
 
-> **Note:**  Wrapping the file again with new File([...]) is optional but helpful if you want to manipulate the name or metadata before sending.
+> **Note:** Wrapping the file again with new File([...]) is optional but helpful if you want to manipulate the name or metadata before sending.
 {: .prompt-info }
-
-> Important: All of these lines (fileUploaded, if (fileUploaded == null), and the FormData block) should be written inside the event listener function — directly with the async () => {} function.
-{: .prompt-danger }
 
 This is the foundation of getting the syllabus file from the user and preparing it for conversion.
 
-At this point your code should look similar to this.
+At this point your code should look similar to this:
 ```js
-document.getElementById('file-upload').addEventListener('change', async () => {
-    const fileUploaded = this.files.item(0);
-    if(fileUploaded == null){
+document.getElementById('file-upload').addEventListener('change', async (event) => {
+    const fileUploaded = event.target.files[0];
+    if (!fileUploaded) {
         return;
     }
     const form = new FormData();
@@ -633,9 +645,9 @@ createFileAndDownload("assignments.csv", cleaned);
 ### Finishing our Event Listener
 By the end of this tutorial, your full addEventListener function should look something like this:
 ```js
-document.getElementById('file-upload').addEventListener('change', async () => {
+document.getElementById('file-upload').addEventListener('change', async (event) => {
     // Get fileUploaded, returns file object at index 0
-    const fileUploaded = this.files.item(0);
+    const fileUploaded = event.target.files[0];
     if (fileUploaded == null) {
         return;
     }
@@ -668,22 +680,31 @@ document.getElementById('file-upload').addEventListener('change', async () => {
 {: .prompt-success }
 
 
+## Completion & Discussion Checklist
+
+Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
+
+| # | Type | Item | Prompt Preview |
+| :-: | :--- | :--- | :--- |
+| 1 | Bug Hunt | Arrow Function `this.files` Context | If you test this handler, DevTools logs `TypeError: Cannot read properties of undefined (reading 'item')`. Why is `this.files` undefined in an arrow function, and how does `event.target.files[0]` fix it? |
+| 2 | Question | HTTP `Accept` Header Negotiation | What does the header `"Accept": "application/json"` communicate to the API server? What might happen if a client doesn't specify which format it expects back? |
+| 3 | Question | JSON String Serialization | Why do web APIs expect serialized JSON strings (via `JSON.stringify()`) in HTTP request bodies instead of raw in-memory JavaScript objects? |
+| 4 | Task | Fetch Signed Download URL | Use `fetch()` to make a `GET` request to `https://api.mistral.ai/v1/files/FILE_ID/url?expiry=24`, pass the required headers, and extract the signed download URL using `.json()`. |
+| 5 | Task | Execute Mistral OCR Request | Use `fetch()` with method `'POST'` to send the JSON-stringified document payload to `https://api.mistral.ai/v1/ocr`, pass headers, and extract the result using `.json()`. |
+| 6 | Task | Aggregate Multi-Page Markdown | Loop through `ocrJson.pages` and concatenate the `markdown` property from each page into a single combined Markdown string. |
+| 7 | Task | Gemini Structured CSV Generation | Implement `async function JsonToCSV(markdownExport)` to `POST` the combined markdown to Gemini's endpoint and request assignment extraction in CSV format. |
+
 ## Extending your extension
 
-Congratulations on finishing the core project! 🎉 Here are some exciting directions you can take it next:
+Congratulations on finishing the core project! Here are some exciting directions you can take it next:
 
 - Pull syllabi directly from the current webpage instead of uploading a PDF!
-
 - Integrate photo uploads and use OCR to extract text from syllabus images!
-
 - Send data straight to Google Sheets instead of downloading a CSV!
-
 - Add editing tools, filters, or even reminders based on due dates!
-
 - Let users share and browse parsed syllabi from others!
 
 > This project is a great base — now make it your own! 
 {: .prompt-info }
-=======
 
 

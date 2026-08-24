@@ -752,6 +752,25 @@ export default function LoadingExample() {
 }
 ```
 
+## Completion & Discussion Checklist
+
+Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
+
+| # | Type | Item | Prompt Preview |
+| :-: | :--- | :--- | :--- |
+| 1 | Bug Hunt | YouTube Player Dimensions Bug | In the video component, required player dimensions were omitted. Check the Expo compiler logs to identify the missing properties and restore the video view. |
+| 2 | Question | Babel Transpilation | Take a moment to explore what Babel is and how it transforms modern JSX and TypeScript into device-compatible JavaScript. |
+| 3 | Question | Expo Configuration Files | What are `package.json` and `app.json` used for in Expo, and how does `app.json` control native app metadata? |
+| 4 | Question | Component Definition | What is a React component? Learn a high-level definition to understand how components structure mobile interfaces. |
+| 5 | Question | Component Return Values | What do React Native component functions return under the hood? |
+| 6 | Question | Third-Party Package Trade-offs | What are the benefits and potential trade-offs of relying on third-party NPM packages in a mobile project? |
+| 7 | Question | `<Link>` vs. Standard Buttons | Why do we import the `<Link>` component instead of just using a standard mobile button for screen transitions? |
+| 8 | Question | `onChangeText` Event Model | How does React Native's `onChangeText` event differ from the standard web `onChange` event handler? |
+| 9 | Question | `useState` UI Reconciliation | Why can't we use a simple `let input = ""` variable? What does `useState` do under the hood to trigger re-renders? |
+| 10 | Question | Dynamic Segment Routing (`[videoId]`) | Why does the route filename use brackets `[videoId]`? What will the parameter value be when navigating to `/video/abc`? |
+| 11 | Task | Playlist Screen Component | Inside `app/playlist/index.tsx`, create a React Native component displaying mock video cards styled with NativeWind linking to `/video`. |
+| 12 | Challenge | Dynamic Video Param Binding | Connect `useLocalSearchParams()` in `app/video/[videoId].tsx` to dynamically pass the `videoId` to `<YoutubePlayer>`. |
+
 *That is all for this section of the tutorial!*
 
 In Part 2, we will dive into data fetching, calling actual APIs, and populating our video cards with real YouTube videos!
