@@ -570,6 +570,9 @@ update(row, col) {
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (7 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | Empty Grid Null Check | Accessing `particle.color` on an empty grid cell causes a null error. Verify that a particle exists at `(row, col)` before reading its properties. |
@@ -579,5 +582,7 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 5 | Task | Fix Particle Streaking | Modify the `moveParticle` function in `canvas.js` to stop the particles from streaking as they fall. |
 | 6 | Task | Prevent Particle Overwrite | Utilizing `getParticle`, add a check in `moveParticle` in `canvas.js` to make sure a particle cannot move on top of another particle. |
 | 7 | Challenge | Custom Physics Experimentation | Mess around with the sand physics! What happens if you have the sand move two steps every update (`row+2` or `col+2`), or if you try to move left and right first? |
+
+</details>
 
 Congratulations! You've completed the first part of the Falling Sand tutorial. You can now create and make sand particles fall and react to simple physics. In the next part, we'll introduce more particle types and make them interact with each other.

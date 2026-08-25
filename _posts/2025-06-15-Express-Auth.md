@@ -2214,6 +2214,9 @@ Refer back to the gif at the beginning of the guide to see the full design.
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (17 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | Response Header Crash (`ERR_HTTP_HEADERS_SENT`) | If you test this controller with invalid credentials, the server crashes with `Cannot set headers after they are sent`. Why does Express continue running after calling `res.send()`, and how does `return` fix it? |
@@ -2233,6 +2236,8 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 15 | Task | Token Expiry Verification | Validate whether the JWT extracted from `localStorage` is expired upon retrieval. If expired, purge the token and reset state. |
 | 16 | Task | Frontend Logout Function | Implement `handleLogout` inside `useLogin` to clear `localStorage`, reset state variables, and clear the service token. |
 | 17 | Task | Protected App Routing Guards | Upgrade `App.tsx` with routes `/login`, `/register`, and `/home`. Redirect authenticated users to `/home` and unauthenticated users to `/login`. |
+
+</details>
 
 ## Conclusion
 

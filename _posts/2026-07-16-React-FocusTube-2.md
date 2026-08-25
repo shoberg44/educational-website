@@ -393,6 +393,9 @@ Lastly, YouTube's search endpoint sometimes returns channels or YouTube Shorts, 
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (8 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | Unresolved Promise Bug (Missing `await`) | TypeScript compiles without errors, yet no search results appear. Why does omitting `await` store an unresolved `Promise` in state, and how do we resolve it? |
@@ -403,6 +406,8 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 6 | Question | Nullish Coalescing (`??`) Operator | Look at how we fall back to `"No Title"` using the `??` operator. What is this operator called, and how does it prevent crashes compared to `||`? |
 | 7 | Task | Playlist Screen Implementation | Build `app/playlist/[playlistId].tsx`. Fetch playlist items using `fetchPlaylistVideos` with `playlistId` from route parameters and render video cards. |
 | 8 | Challenge | Video Filtering (Shorts & Channels) | Filter video results using `vid.id.kind === 'youtube#video'` to ensure only standard videos appear in the search feed. |
+
+</details>
 
 ## Congrats!
 

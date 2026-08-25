@@ -756,6 +756,9 @@ export default function LoadingExample() {
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (12 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | YouTube Player Dimensions Bug | In the video component, required player dimensions were omitted. Check the Expo compiler logs to identify the missing properties and restore the video view. |
@@ -770,6 +773,8 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 10 | Question | Dynamic Segment Routing (`[videoId]`) | Why does the route filename use brackets `[videoId]`? What will the parameter value be when navigating to `/video/abc`? |
 | 11 | Task | Playlist Screen Component | Inside `app/playlist/index.tsx`, create a React Native component displaying mock video cards styled with NativeWind linking to `/video`. |
 | 12 | Challenge | Dynamic Video Param Binding | Connect `useLocalSearchParams()` in `app/video/[videoId].tsx` to dynamically pass the `videoId` to `<YoutubePlayer>`. |
+
+</details>
 
 *That is all for this section of the tutorial!*
 

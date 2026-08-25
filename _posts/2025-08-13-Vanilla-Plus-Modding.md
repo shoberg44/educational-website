@@ -997,12 +997,17 @@ Feel free to finish it up, make a different one with Sapphire, or design your ow
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (4 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Question | Armor Texture Naming Pattern | Why is specifying the exact material name for armor so critical in Forge? What naming pattern does Forge expect for wearable armor texture files? |
 | 2 | Challenge | Sapphire Custom Item | Make a Sapphire item with custom properties: fire resistance, max stack size of 16, and durability set to 500 using property method chaining. |
 | 3 | Challenge | Sapphire Ore Block | Make Sapphire Ore with custom block attributes: ice friction, amethyst sound effects, `destroyTime = 6.0`, and `explosionResistance = 6.5`. |
 | 4 | Task | Complete Armor Set | Finish making the rest of the wearable armor set (Helmet, Leggings, Boots) and verify model texture bindings. |
+
+</details>
 
 ### Congrats!
 

@@ -684,6 +684,9 @@ document.getElementById('file-upload').addEventListener('change', async (event) 
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (7 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | Arrow Function `this.files` Context | If you test this handler, DevTools logs `TypeError: Cannot read properties of undefined (reading 'item')`. Why is `this.files` undefined in an arrow function, and how does `event.target.files[0]` fix it? |
@@ -693,6 +696,8 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 5 | Task | Execute Mistral OCR Request | Use `fetch()` with method `'POST'` to send the JSON-stringified document payload to `https://api.mistral.ai/v1/ocr`, pass headers, and extract the result using `.json()`. |
 | 6 | Task | Aggregate Multi-Page Markdown | Loop through `ocrJson.pages` and concatenate the `markdown` property from each page into a single combined Markdown string. |
 | 7 | Task | Gemini Structured CSV Generation | Implement `async function JsonToCSV(markdownExport)` to `POST` the combined markdown to Gemini's endpoint and request assignment extraction in CSV format. |
+
+</details>
 
 ## Extending your extension
 

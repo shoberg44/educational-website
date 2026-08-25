@@ -368,6 +368,9 @@ Think about other real-world substances or fantastical elements and how they mig
 
 Before joining the group discussion or concluding this tutorial, ensure you have completed the tasks, investigated the bugs, and are ready to discuss the questions below:
 
+<details markdown="1">
+<summary>Click to expand Completion & Discussion Checklist (8 Items)</summary>
+
 | # | Type | Item | Prompt Preview |
 | :-: | :--- | :--- | :--- |
 | 1 | Bug Hunt | Vanishing Water Swap Bug | Run the simulation and drop sand on water. The sand falls through, but the water vanishes! Why did we lose the water particle, and how can we use `temp` to exchange their positions? |
@@ -378,6 +381,8 @@ Before joining the group discussion or concluding this tutorial, ensure you have
 | 6 | Task | Create `Dirt` Class | Create a new class called `Dirt` that extends `Sand`. In its constructor, set color to `"brown"` and type to `"dirt"`. Add `Dirt` as an option in `checkParticleType`. |
 | 7 | Task | Create `Grass` Class | Create a new class called `Grass` extending `Sand` (`color: "green"`, `type: "grass"`). Do not add it to `checkParticleType` — grass can only be created when water touches dirt. |
 | 8 | Challenge | 3 Custom Particles | Add at least 3 new particles and make sure to add interactions with other particles (don't just add `Metal` and make it act like `Stone`). Get creative with it! |
+
+</details>
 
 ## Completion
 
