@@ -20,7 +20,7 @@ Welcome to the Express Authentication tutorial! In this project, you will learn 
 **Prerequisites**:
 
 - Basic understanding of how the web works, APIs, sending and receiving requests
-- Basic coding skills in JS. React skills is preferrable
+- Basic coding skills in JS. React skills are preferable
 
 **What you will learn:**
 
@@ -390,8 +390,8 @@ SECRET_KEY=your_secret_jwt_key
 ```
 {: file="backend/.env" }
 
-> **Important**: Never commit your `.env` file to version control! Add it to your `.gitignore` file. Use [jwt-keys.21no.de](https://jwt-keys.21no.de/) to generate a cryptographically strong secret string for `SECRET_KEY`.
-{: .prompt-warning }
+> **NOTE:** Never commit your `.env` file to version control! Add it to your `.gitignore` file. Use [jwt-keys.21no.de](https://jwt-keys.21no.de/) to generate a cryptographically strong secret string for `SECRET_KEY`.
+{: .prompt-info }
 
 Next, create a configuration file to handle environment variables:
 
@@ -516,7 +516,7 @@ Now our basic backend application should be done. First, configure your `package
 {: file="backend/package.json"}
 {: .nolineno}
 
-The important part here is the `-r tsconfig-paths/register` part. This will enable path mapping support (like `@shared/types`) and without this your `@shared/*` imports won't work. You can look up the rest if you don' understand.
+The important part here is the `-r tsconfig-paths/register` part. This will enable path mapping support (like `@shared/types`) and without this your `@shared/*` imports won't work. You can look up the rest if you don't understand.
 
 Then start your server:
 
@@ -717,7 +717,7 @@ Next we will cover how the JWT is used.
 
 ##### 1. Token extraction middleware
 
-When the user is logged in and attempts to perform restricted operations, the JWT will be extracted from the request to validate it. This middleware will extracts the token from the `Authorization` header:
+When the user is logged in and attempts to perform restricted operations, the JWT will be extracted from the request to validate it. This middleware will extract the token from the `Authorization` header:
 
 ```typescript
 import { Request, Response, NextFunction } from 'express';
@@ -834,7 +834,7 @@ Aside from `username`, `name` and `id`, the `iat` and `exp` means issued time an
 
 To summarize: the first middleware extracts the JWT and attaches it to the request. The second one validates the token, and if the token is valid, it attaches the username and id of the user to the request. 
 
-> You might be wondering why we attaches the username, name and id to the request after decoding the JWT - would that expose the username and id? Well, the thing is that the JWT payload is not securely encrypted in the first place. JWT use base64 encoding, which is easily reversible, and pretty much everybody can decrypt a JWT once they obtain it. The core part of JWT is to prevent tampering - since only a slight alternation of the content will create a completely different JWT. Read more [here](https://softwareengineering.stackexchange.com/questions/280257/json-web-token-why-is-the-payload-public). 
+> You might be wondering why we attach the username, name and id to the request after decoding the JWT - would that expose the username and id? Well, the thing is that the JWT payload is not securely encrypted in the first place. JWT use base64 encoding, which is easily reversible, and pretty much everybody can decrypt a JWT once they obtain it. The core part of JWT is to prevent tampering - since only a slight alteration of the content will create a completely different JWT. Read more [here](https://softwareengineering.stackexchange.com/questions/280257/json-web-token-why-is-the-payload-public). 
 {: .prompt-info}
 
 ##### 3. Adding middleware to protected endpoints 
@@ -856,7 +856,7 @@ app.use("/api/users", jwtAuth, userRouter);
 
 export default app;
 ```
-{: file="backend/app.ts"}
+{: file="backend/src/app.ts"}
 {: .nolineno}
 
 When a user logs in or registers, there is no JWT present, so the `modifyToken` middleware will do nothing. Once authenticated, subsequent requests contain the `Authorization: Bearer <token>` header, allowing `modifyToken` and `jwtAuth` to validate the token before reaching protected routes.
@@ -1297,8 +1297,8 @@ export default App;
 
 The approach works like this: When jwt is `null`, nothing happens. But then if `jwt` is not null, then the entire function runs again, and then `payload` will run first before `useEffect` runs. After that, when `useEffect` runs, it will get the token, send it, and filter the response by payload data. 
 
-> ...or maybe you can change it in the backend so that the resposne already contains the filtered data? :) That approach is better but I'll let you figure out that yourself. 
-{: .prompt-tip}
+> **NOTE:** You can also update the backend `/api/contacts` endpoint to return only contacts belonging to the authenticated user (`req.user.id`). This avoids sending all contacts across the network and filtering them in React.
+{: .prompt-info }
 
 Also notice `JwtPayload`. It is yet another defined custom types in `types.ts`. We will cover it right in the next part. 
 
@@ -2282,6 +2282,14 @@ Currently our app have no styling at all. You can improve it by adding more CSS/
 There is no right answer to this. But for example, mine look like this:
 
 ```css
+:root {
+  --primary-color: #2563eb;
+  --error-color: #ef4444;
+  --border-radius: 8px;
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --transition: all 0.2s ease;
+}
+
 /* Homepage Styles */
 .homepage-container {
   max-width: 600px;
