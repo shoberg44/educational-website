@@ -107,7 +107,6 @@ You will see a newly created `tsconfig.json` file. You can try playing around wi
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
     "paths": {
       "@shared/*": ["../shared/*"]
     },
@@ -1311,8 +1310,8 @@ As our application grows, you might notice that our `App.tsx` is becoming quite 
 
 First move the login form into its own component: 
 
-```tsx 
-import React, { useState } from "react";
+```tsx
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
@@ -1324,7 +1323,7 @@ const LoginForm = ({ handleLogin }: LoginFormProps) => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleLogin(username, password);
   };
@@ -1450,7 +1449,6 @@ Although not specifying `LoginRequest` for the credentials does not result in wa
 Next, refactor the contact displaying part into its own component: 
 
 ```tsx
-import React from 'react';
 import type { Contact } from '@shared/types';
 
 interface ContactDisplayProps {
@@ -1623,9 +1621,9 @@ Let's create our `RegisterForm` component:
 
 ```tsx
 import type { RegisterRequest } from "@shared/types";
-import React, { useState } from 'react';
-import * as registerService from '../services/registerService';
-import { useNavigate } from 'react-router-dom';
+import { useState, type FormEvent } from "react";
+import * as registerService from "../services/registerService";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => { 
   const [username, setUsername] = useState("");
@@ -1634,7 +1632,7 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
@@ -1895,9 +1893,9 @@ function App() {
 Let's create our `Homepage` and `NotFoundPage` components:
 
 ```tsx
-import React, { useState } from 'react';
-import type { Contact } from '@shared/types';
-import * as contactService from '../services/contactService';
+import { useState, useEffect, type FormEvent } from "react";
+import type { Contact } from "@shared/types";
+import * as contactService from "../services/contactService";
 
 interface HomepageProps {
   contacts: Contact[];
@@ -1906,15 +1904,15 @@ interface HomepageProps {
 }
 
 export const Homepage = ({ contacts, username, handleLogout }: HomepageProps) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
   const [contactList, setContactList] = useState<Contact[]>(contacts);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setContactList(contacts);
   }, [contacts]);
 
-  const handleAddContact = async (e: React.FormEvent) => {
+  const handleAddContact = async (e: FormEvent) => {
     e.preventDefault();
     if (!name || !number) return;
 
