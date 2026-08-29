@@ -271,7 +271,7 @@ export default mongoose.model("Contact", contactSchema);
 {: file="backend/src/models/contact.ts" }
 {: .nolineno }
 
-If you were able to understand the `User` file above, this file should be pretty similar. One difference is that the `belongsTo` field is not an array but instead one object - which make sense, because contacts can only be created when a user is logged in, which means that the contact can only belong to one user only.
+If you were able to understand the `User` file above, this file should be pretty similar. One difference is that the `belongsTo` field is not an array but instead one object - which make sense, because contacts can only be created when a user is logged in, which means that the contact can only belong to one user only. Note that the phone number validator regex `/^\d{2,3}-\d{7,}$/` expects 2–3 digits followed by a hyphen and at least 7 digits (e.g. `09-1234567` or `012-12345678`).
 
 ### Creating controllers for our models 
 
@@ -387,10 +387,11 @@ We will use MongoDB for our database. Setup your database according to this [sho
 ```bash
 MONGODB_URI={your_mongodb_url}
 PORT=3001
+SECRET_KEY=your_secret_jwt_key
 ```
 {: file="backend/.env" }
 
-> **Important**: Never commit your `.env` file to version control! Add it to your `.gitignore` file.
+> **Important**: Never commit your `.env` file to version control! Add it to your `.gitignore` file. Use [jwt-keys.21no.de](https://jwt-keys.21no.de/) to generate a cryptographically strong secret string for `SECRET_KEY`.
 {: .prompt-warning }
 
 Next, create a configuration file to handle environment variables:
@@ -1088,7 +1089,7 @@ Then, enter your project name, choose React and TypeScript. After that, you can 
 ```bash
 cd frontend 
 npm install 
-npm install axios jwt-decode
+npm install axios jwt-decode react-router-dom
 npm run dev
 ```
 {: .nolineno}
@@ -1109,6 +1110,10 @@ function App() {
     username: string;
     password: string;
   }
+
+  const handleLoginBackend = async (credentials: Credentials) => {
+    console.log("Submitting credentials:", credentials);
+  };
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -1160,7 +1165,7 @@ After this we can have a simple login form that look like this (the `register` b
 
 ![](Pasted image 20250708233009.png)
 
-First the form have two states: `username` and `password`, contained within a form, and set up to change as the user edit the text fields. Then, the submit button is named `login` and linked to `handleLogin`. `event.preventDefault()` is to prevent the page from reloading. Notice that `handleLogin` is currently missing `handleLoginBackend`. 
+First the form have two states: `username` and `password`, contained within a form, and set up to change as the user edit the text fields. Then, the submit button is named `login` and linked to `handleLogin`. `event.preventDefault()` is to prevent the page from reloading. Notice that `handleLogin` is currently calling a placeholder `handleLoginBackend`. 
 
 > **TASK:** Create function `handleLoginBackend` that will send the credentials (username and password) to the backend `/api/login`. If valid, persist the returned JWT within React state. (You can use [Axios](https://github.com/axios/axios)).
 {: .prompt-warning }
@@ -1170,7 +1175,7 @@ First the form have two states: `username` and `password`, contained within a fo
 ```tsx
 function App() {
   // ...
-  const [jwt, setJwt] = useState(null);
+  const [jwt, setJwt] = useState<string | null>(null);
 
   // ...
 
@@ -1179,9 +1184,9 @@ function App() {
 
     try {
       const response = await axios.post(baseUrl, credentials);
-      const jwt = response.data;
+      const token = response.data.token;
 
-      setJwt(jwt);
+      setJwt(token);
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -1245,7 +1250,7 @@ Next, after the user logs in, we display their contacts. To ensure users only se
 
 ```tsx
 function App() {
-  const [jwt, setJwt] = useState(null);
+  const [jwt, setJwt] = useState<string | null>(null);
   const [contacts, setContacts] = useState([]);
 
   const payload = jwt !== null 
@@ -1253,9 +1258,9 @@ function App() {
     : null;
 
   useEffect(() => {
-    if (payload !== null) {
+    if (payload !== null && jwt) {
       const contactUrl = "/api/contacts";
-      const token = jwt.token;
+      const token = jwt;
 
       const config = {
         headers: { Authorization: `Bearer ${token}` },
@@ -1267,7 +1272,7 @@ function App() {
         ));
       });
     }
-  }, [payload]);
+  }, [payload, jwt]);
 
   return (
     <>
@@ -1476,26 +1481,26 @@ Here notice that `ContactDisplayProps` is directly defined inside the file. We c
 Finally, after refactoring, our `App.tsx` will be much cleaner:
 
 ```tsx
+import { BrowserRouter as Router } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import ContactDisplay from "./components/ContactDisplay";
 import { useLogin } from "./hooks/useLogin";
 
 function App() {
-  const {payload, contacts, handleLogin} = useLogin();
+  const { payload, contacts, handleLogin } = useLogin();
 
   return (
-    <>
+    <Router>
       <h1>login</h1>
       <LoginForm handleLogin={handleLogin} />
       {payload !== null && (
         <ContactDisplay contacts={contacts} username={payload.username} />
       )}
-    </>
+    </Router>
   );
 }
 
 export default App;
-
 ```
 {: file="frontend/src/App.tsx"}
 {: .nolineno}
@@ -1763,7 +1768,6 @@ Then add an effect to restore the token and user session when the page is refres
 export function useLogin() {
   const [jwt, setJwt] = useState<string | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const { showNotification } = useNotification();
 
   const payload = jwt !== null 
     ? jwtDecode<JwtPayload>(jwt)
@@ -2043,6 +2047,9 @@ Now, to use the frontend production build with the backend, one option is to cop
 ```
 {: file="backend/package.json"}
 {: .nolineno}
+
+> **NOTE:** On Windows PowerShell or Command Prompt, run the build command manually (`cd ../frontend; npm run build; Copy-Item -Recurse dist ..\backend`) or use WSL/Git Bash to run the chained shell commands.
+{: .prompt-info }
 
 This will delete the current `dist` folder (if present), go to frontend and build, then copy the entire folder back to the backend folder. (hence the path `"../../dist/index.html"` in `unknownEndpoint` above  - it tries to load `dist/index.html`).
 
