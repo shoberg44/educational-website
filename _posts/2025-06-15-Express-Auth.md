@@ -731,7 +731,6 @@ const modifyToken = (req: Request, res: Response, next: NextFunction) => {
     req.token = authorization.substring(7);
   }
 
-  console.log(req.token);
   next();
 }
 
@@ -1624,6 +1623,8 @@ import type { RegisterRequest } from "@shared/types";
 import { useState, type FormEvent } from "react";
 import * as registerService from "../services/registerService";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../hooks/useNotification";
+import axios from "axios";
 
 const RegisterForm = () => { 
   const [username, setUsername] = useState("");
@@ -1631,6 +1632,7 @@ const RegisterForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -1644,8 +1646,14 @@ const RegisterForm = () => {
       };
 
       await registerService.register(registerData);
-      navigate("/");
+      showNotification("Registration successful! Please log in.", "success");
+      navigate("/login");
     } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        showNotification(err.response.data.error, "error");
+      } else {
+        showNotification("Registration failed", "error");
+      }
       console.error(err);
     }
   };

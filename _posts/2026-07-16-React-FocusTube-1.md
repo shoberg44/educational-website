@@ -267,7 +267,7 @@ Instead of writing complex Native iOS and Android code from scratch to display a
 Run this command to install a popular YouTube video package:
 
 ```console
-npm install react-native-youtube-iframe react-native-webview
+npm install react-native-youtube-iframe react-native-webview react-native-web-webview
 ```
 
 > **QUESTION:** What are the benefits of using third-party packages instead of writing everything from scratch? Are there any potential downsides?
